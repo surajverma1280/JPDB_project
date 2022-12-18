@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html lang="en">
+<head>
+<title>form</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script
+src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script
+src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+<h2>Student Enrollment Form</h2>
+<form id="empForm" method="post">
+<div class="form-group">
+<label for="rollno">Roll No:</label>
+<input type="text" class="form-control" id="rollno"
+placeholder="Enter Roll No" name="rollno">
+</div>
+<div class="form-group">
+<label for="studName">Student FullName:</label>
+<input type="text" class="form-control" id="studName"
+placeholder="Enter Student Name" name="studName">
+</div>
+<div class="form-group">
+    <label for="studClass">Class:</label>
+    <select class="form-control" name="studClass" placeholder="Enter Student Class" id="studClass" required>
+        <option value="" >--Select class--</option>
+        <option value="1st">1st</option>
+        <option value="2nd">2nd</option>
+        <option value="3rd">3rd</option>
+        <option value="4th">4th</option>
+        <option value="5th">5th</option>
+        <option value="5th">6th</option>
+        <option value="5th">7th</option>
+        <option value="5th">8th</option>
+        <option value="5th">9th</option>
+        <option value="5th">10th</option>
+        <option value="5th">11th</option>
+        <option value="5th">12th</option>
+    </select>
+</div>
+<div class="form-group">
+<label for="studDob">Date of Birth:</label>
+<input type="date" class="form-control" id="studDob"
+placeholder="Enter Student Date of Birth" name="studDob">
+</div>
+<div class="form-group">
+<label for="studAddress">Address:</label>
+<input type="text" class="form-control" id="studAddress"
+placeholder="Enter Address" name="studAddress">
+</div>
+<div class="form-group">
+<label for="enrDate">Date of Enrollment:</label>
+<input type="date" class="form-control" id="enrDate"
+placeholder="Enter Student Date of Enrollment" name="enrDate">
+</div>
+<center>
+<input type="button" class="btn btn-primary" id="empSave" value="Save"
+onclick="saveEmployee();">
+<input type="reset" value="Reset">
+</center>
+</form>
+</div>
+<script>
+$("#rollno").focus();
+function validateAndGetFormData() {
+var rollnoVar = $("#rollno").val();
+if (rollnoVar === "") {
+alert("Roll no is Required Value");
+$("#rollno").focus();
+return "";
+}
+var studNameVar = $("#studName").val();
+if (studNameVar === "") {
+alert("Student Name is Required Value");
+$("#studName").focus();
+return "";
+}
+var studClassVar = $("#studClass").val();
+if (studClassVar === "") {
+alert("Student Class is Required Value");
+$("#studClass").focus();
+return "";
+}
+var studDobVar = $("#studDob").val();
+if (studDobVar === "") {
+alert("Date of Birth is Required Value");
+$("#studDob").focus();
+return "";
+}
+var studAddressVar = $("#studAddress").val();
+if (studAddressVar === "") {
+alert("Address is Required Value");
+$("#studAddress").focus();
+return "";
+}
+var enrDateVar = $("#enrDate").val();
+if (enrDateVar === "") {
+alert("Enrollment Date is Required Value");
+$("#enrDate").focus();
+return "";
+}
+var jsonStrObj = {
+Rollno: rollnoVar,
+studName: studNameVar,
+studClass: studClassVar,
+studDob: studDobVar,
+studAddress: studAddressVar,
+enrDate: enrDateVar
+};
+return JSON.stringify(jsonStrObj);
+}
+// This method is used to create PUT Json request.
+function createPUTRequest(connToken, jsonObj, dbName, relName) {
+var putRequest = "{\n"
++ "\"token\" : \""
++ connToken
++ "\","
++ "\"dbName\": \""
++ dbName
++ "\",\n" + "\"cmd\" : \"PUT\",\n"
++ "\"rel\" : \""
++ relName + "\","
++ "\"jsonStr\": \n"
++ jsonObj
++ "\n"
++ "}";
+return putRequest;
+}
+function executeCommand(reqString, dbBaseUrl, apiEndPointUrl) {
+var url = dbBaseUrl + apiEndPointUrl;
+var jsonObj;
+$.post(url, reqString, function (result) {
+jsonObj = JSON.parse(result);
+}).fail(function (result) {
+var dataJsonObj = result.responseText;
+jsonObj = JSON.parse(dataJsonObj);
+});
+return jsonObj;
+}
+function resetForm() {
+$("#rollno").val("");
+$("#studName").val("");
+$("#studClass").val("");
+$("#studDob").val("");
+$("#studAddress").val("");
+$("#ernDate").val("");
+$("#rollno").focus();
+}
+function saveEmployee() {
+var jsonStr = validateAndGetFormData();
+if (jsonStr === "") {
+return;
+}
+var putReqStr = createPUTRequest("90937887|-31949272495352112|90952121",
+jsonStr, "Student-Data", "School-DB");
+alert(putReqStr);
+jQuery.ajaxSetup({async: false});
+var resultObj = executeCommand(putReqStr,
+"http://api.login2explore.com:5577", "/api/iml");
+alert(JSON.stringify(resultObj));
+jQuery.ajaxSetup({async: true});
+resetForm();
+}
+</script>
+</body>
+</html>
